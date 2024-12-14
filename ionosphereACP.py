@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 # Step 1: Load the dataset
-data = pd.read_csv('ionosphere.arff.csv')  # Replace with your actual file path
+data = pd.read_csv('./DataSet/ionosphere.arff.csv')  # Replace with your actual file path
 
 # Extract only numerical data
 numerical_data = data.select_dtypes(include=[np.number])
@@ -59,7 +59,7 @@ sorted_eigenvectors = eigenvectors[:, sorted_indices]
 
 
 # Step 8: Project the data onto the top k principal components
-k = 30
+k = 8
 # Number of principal components to keep
 top_k_eigenvectors = eigenvectors[:, :k]
 projected_data = np.dot(standardized_data, top_k_eigenvectors)
