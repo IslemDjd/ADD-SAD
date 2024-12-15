@@ -44,19 +44,11 @@ sorted_indices = np.argsort(eigenvalues)[::-1]
 sorted_eigenvalues = eigenvalues[sorted_indices]
 sorted_eigenvectors = eigenvectors[:, sorted_indices]
 
-# print("\nEigenvalues:")
-# print(sorted_eigenvalues)
-# print("\nEigenvectors:")
-# print(sorted_eigenvectors)
+# Step 6: Compute the explained variance ratio
+explained_variance_ratio = sorted_eigenvalues / np.sum(sorted_eigenvalues)
 
-# # Step 6: Project the data onto the top k components
-# k = 8  # Number of principal components to retain
-# top_eigenvectors = sorted_eigenvectors[:, :k]
-# projected_data = standardized_data.dot(top_eigenvectors)
-#
-# # Convert projected data to a DataFrame for easier handling
-# projected_df = pd.DataFrame(projected_data, columns=[f'PC{i+1}' for i in range(k)])
-
+# Step 7: Calculate cumulative explained variance
+cumulative_explained_variance = np.cumsum(explained_variance_ratio)
 
 # Step 8: Project the data onto the top k principal components
 k = 8
@@ -68,3 +60,35 @@ projected_data = np.dot(standardized_data, top_k_eigenvectors)
 print("\n Projected Data (first 5 rows):")
 print(projected_data[:5])
 
+
+
+
+# import matplotlib.pyplot as plt
+
+# # Step 9: Project data onto the first two principal components for visualization
+# projected_data_2D = projected_data[:, :2]  # Use only the first two principal components
+
+# # Step 10: Visualize the projection
+# plt.figure(figsize=(8, 6))
+
+# # Scatter plot for the first two principal components
+# plt.scatter(
+#     projected_data_2D[:, 0],  # PC1
+#     projected_data_2D[:, 1],  # PC2
+#     c='blue',  # Color of the points
+#     alpha=0.7,  # Transparency for better visualization
+#     edgecolor='k'  # Black edge for points
+# )
+
+# # Add titles and axis labels
+# plt.title("Projection onto First Two Principal Components", fontsize=16)
+# plt.xlabel("Principal Component 1", fontsize=12)
+# plt.ylabel("Principal Component 2", fontsize=12)
+# plt.grid(True)
+
+# # Save the plot
+# plt.savefig("Projected_Data_Plot.png")
+# print("Plot saved as 'Projected_Data_Plot.png'.")
+
+# # Show the plot
+# plt.show()
