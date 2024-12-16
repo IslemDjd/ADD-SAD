@@ -4,18 +4,19 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from tensorflow.keras.models import Sequential # type: ignore
 from tensorflow.keras.layers import Dense # type: ignore
-import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 # Step 1: Load the dataset
-file_path = './DataSet/iris.arff.csv'  # Update with the correct path
+file_path = './DataSet/ionosphere.arff.csv'  # Update with the correct path
 data = pd.read_csv(file_path)
 
 # Step 2: Preprocess the data
 # Assume 'class' is the label column
 if 'class' in data.columns:
-    X = data.drop(columns=['class'])
+    # A = data.drop(columns=['class'])
+    X = [f"a{i:02}" for i in range(3, 35)] 
+    z = ['a01']
     y = data['class']
+    
 else:
     raise ValueError("Error: 'class' column not found in the dataset.")
 
@@ -26,16 +27,17 @@ if y.dtype == 'object':
 
 # Standardize the features
 scaler = StandardScaler()
-X = scaler.fit_transform(X)
+data[X] = scaler.fit_transform(data[X])
+X = data[z + X]
 
 # Split the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Step 3: Build the neural network
 model = Sequential([
-    Dense(16, input_dim=X_train.shape[1], activation='relu'),  # Input layer with 8 neurons
-    Dense(8, activation='relu'),  # Hidden layer with 8 neurons
-    Dense(y_train.shape[1], activation='softmax')  # Output layer with 3 neurons for 3 classes
+    Dense(32, input_dim=X_train.shape[1], activation='relu'),  # Input layer
+    Dense(16, activation='relu'),  # Hidden layer
+    Dense(y_train.shape[1], activation='softmax')  # Output layer
 ])
 
 # Compile the model
@@ -48,6 +50,10 @@ history = model.fit(X_train, y_train, epochs=50, batch_size=8, validation_split=
 loss, accuracy = model.evaluate(X_test, y_test)
 print(f"Test Loss: {loss}")
 print(f"Test Accuracy: {accuracy}")
+
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
+import numpy as np
 
 # Step 6: Generate predictions
 y_pred = model.predict(X_test)
@@ -62,6 +68,7 @@ disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=encoder.catego
 disp.plot(cmap=plt.cm.Blues)
 plt.title("Confusion Matrix")
 plt.show()
+
 
 # Step 9: Plot training and validation accuracy
 plt.figure(figsize=(10, 6))
@@ -84,3 +91,13 @@ plt.ylabel('Loss')
 plt.legend()
 plt.grid()
 plt.show()
+
+# plt.figure(figsize=(8,6))
+# plt.plot(fpr, tpr, color='r', label=f'ROC Curve (AUC = {roc_auc:.2f})')
+# plt.plot([0, 1], [0, 1], color='black', linestyle='--')
+# plt.title('ROC Curve')
+# plt.xlabel('False Positive Rate')
+# plt.ylabel('True Positive Rate')
+# plt.legend(loc='lower right')
+# plt.grid(True)
+# plt.show()

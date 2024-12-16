@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Step 1: Load the dataset
 data = pd.read_csv('./DataSet/ionosphere.arff.csv')  # Replace with your actual file path
@@ -52,43 +53,47 @@ cumulative_explained_variance = np.cumsum(explained_variance_ratio)
 
 # Step 8: Project the data onto the top k principal components
 k = 8
-# Number of principal components to keep
-top_k_eigenvectors = eigenvectors[:, :k]
+top_k_eigenvectors = sorted_eigenvectors[:, :k]
 projected_data = np.dot(standardized_data, top_k_eigenvectors)
 
-# Display results
-print("\n Projected Data (first 5 rows):")
-print(projected_data[:5])
+# Step 9: Prepare the plot
+if 'class' in data.columns:
+    labels = data['class'].to_numpy()  # Convert to NumPy array for indexing compatibility
+    unique_labels = np.unique(labels)  # Find unique class labels
 
+    # Assign unique colors to each label
+    colors = plt.colormaps['tab10']  # Fetch colormap
+    color_map = {label: colors(i / len(unique_labels)) for i, label in enumerate(unique_labels)}
+else:
+    raise ValueError("No 'class' column found; cannot color-code the plot.")
 
+# Step 10: Project data onto the first two principal components for visualization
+projected_data_2D = projected_data[:, :2]  # Use only the first two principal components
 
+plt.figure(figsize=(8, 6))
 
-# import matplotlib.pyplot as plt
+# Scatter plot for the first two principal components
+for label in unique_labels:
+    label_points = projected_data_2D[labels == label]  # Filter points by label
+    plt.scatter(
+        label_points[:, 0],  # PC1
+        label_points[:, 1],  # PC2
+        color=color_map[label],  # Get the color for this label
+        alpha=0.7,  # Transparency
+        edgecolor='k',  # Black edge for points
+        label=label  # Class label for the legend
+    )
 
-# # Step 9: Project data onto the first two principal components for visualization
-# projected_data_2D = projected_data[:, :2]  # Use only the first two principal components
+# Add titles and axis labels
+plt.title("Projection onto First Two Principal Components (Colored by Class)", fontsize=16)
+plt.xlabel("Principal Component 1", fontsize=12)
+plt.ylabel("Principal Component 2", fontsize=12)
+plt.grid(True)
+plt.legend(loc='best', title="Classes")
 
-# # Step 10: Visualize the projection
-# plt.figure(figsize=(8, 6))
+# Save the plot
+plt.savefig("Projected_Data_Plot_Colored.png", dpi=300)  # Save at a higher resolution
+print("Plot saved as 'Projected_Data_Plot_Colored.png'.")
 
-# # Scatter plot for the first two principal components
-# plt.scatter(
-#     projected_data_2D[:, 0],  # PC1
-#     projected_data_2D[:, 1],  # PC2
-#     c='blue',  # Color of the points
-#     alpha=0.7,  # Transparency for better visualization
-#     edgecolor='k'  # Black edge for points
-# )
-
-# # Add titles and axis labels
-# plt.title("Projection onto First Two Principal Components", fontsize=16)
-# plt.xlabel("Principal Component 1", fontsize=12)
-# plt.ylabel("Principal Component 2", fontsize=12)
-# plt.grid(True)
-
-# # Save the plot
-# plt.savefig("Projected_Data_Plot.png")
-# print("Plot saved as 'Projected_Data_Plot.png'.")
-
-# # Show the plot
-# plt.show()
+# Show the plot
+plt.show()
