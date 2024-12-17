@@ -1,9 +1,11 @@
+#Ce fichier marche pour les deux Iris et Ionosphere
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
 # Step 1: Load the dataset
-data = pd.read_csv('./DataSet/ionosphere.arff.csv')  # Replace with your actual file path
+# data = pd.read_csv('./DataSet/iris.arff.csv')
+data = pd.read_csv('./DataSet/ionosphere.arff.csv')
 
 # Extract only numerical data
 numerical_data = data.select_dtypes(include=[np.number])
@@ -30,6 +32,7 @@ if len(zero_variance_cols) > 0:
 
 # Step 2: Standardize the data (Z-score normalization)
 standardized_data = (numerical_data - numerical_data.mean()) / numerical_data.std()
+print(standardized_data)
 
 # Verify no NaN or Inf values exist after standardization
 assert np.isfinite(standardized_data.values).all(), "Non-finite values in standardized data."
@@ -51,11 +54,12 @@ explained_variance_ratio = sorted_eigenvalues / np.sum(sorted_eigenvalues)
 # Step 7: Calculate cumulative explained variance
 cumulative_explained_variance = np.cumsum(explained_variance_ratio)
 
-# Step 8: Project the data onto the top k principal components
-k = 8
-top_k_eigenvectors = sorted_eigenvectors[:, :k]
-projected_data = np.dot(standardized_data, top_k_eigenvectors)
+# Step 8: Project the data onto the top C principal components
+C = 8
+C_eigenvectors = sorted_eigenvectors[:, :C]
+projected_data = np.dot(standardized_data, C_eigenvectors)
 
+print(projected_data)
 # Step 9: Prepare the plot
 if 'class' in data.columns:
     labels = data['class'].to_numpy()  # Convert to NumPy array for indexing compatibility
@@ -92,8 +96,8 @@ plt.grid(True)
 plt.legend(loc='best', title="Classes")
 
 # Save the plot
-plt.savefig("Projected_Data_Plot_Colored.png", dpi=300)  # Save at a higher resolution
-print("Plot saved as 'Projected_Data_Plot_Colored.png'.")
+plt.savefig("Ionosphere_ACP_Result/Ionosphere_ACP.png", dpi=300)
+print("Plot saved as 'Ionosphere_ACP_Result/Ionosphere_ACP.png'.")
 
 # Show the plot
 plt.show()

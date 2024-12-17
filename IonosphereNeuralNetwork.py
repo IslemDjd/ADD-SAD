@@ -12,7 +12,6 @@ data = pd.read_csv(file_path)
 # Step 2: Preprocess the data
 # Assume 'class' is the label column
 if 'class' in data.columns:
-    # A = data.drop(columns=['class'])
     X = [f"a{i:02}" for i in range(3, 35)] 
     z = ['a01']
     y = data['class']
@@ -35,8 +34,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 # Step 3: Build the neural network
 model = Sequential([
-    Dense(32, input_dim=X_train.shape[1], activation='relu'),  # Input layer
-    Dense(16, activation='relu'),  # Hidden layer
+    Dense(33, input_dim=X_train.shape[1], activation='relu'),  # Input layer
+    Dense(3, activation='relu'),  # Hidden layer
     Dense(y_train.shape[1], activation='softmax')  # Output layer
 ])
 
@@ -44,7 +43,7 @@ model = Sequential([
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Step 4: Train the model
-history = model.fit(X_train, y_train, epochs=50, batch_size=8, validation_split=0.2)
+history = model.fit(X_train, y_train, epochs=100, batch_size=8, validation_split=0.2)
 
 # Step 5: Evaluate the model
 loss, accuracy = model.evaluate(X_test, y_test)

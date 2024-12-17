@@ -5,7 +5,7 @@ matplotlib.use('TkAgg')  # Use a non-interactive backend
 import matplotlib.pyplot as plt
 
 # Step 1: Load the data
-file_path = './DataSet/iris.arff.csv'  # Adjust the path if necessary
+file_path = './DataSet/iris.arff.csv'
 try:
     data = pd.read_csv(file_path)
 except FileNotFoundError:
@@ -14,7 +14,7 @@ except FileNotFoundError:
 
 # Step 2: Separate non-numeric columns (e.g., 'class')
 if 'class' in data.columns:
-    labels = data['class']  # Use 'class' column for coloring
+    labels = data['class']
     data = data.drop(columns=['class'])  # Remove the 'class' column for PCA
 else:
     labels = None
@@ -25,8 +25,8 @@ std = data.std(axis=0)
 data_standardized = (data - mean) / std
 
 # Step 4: Compute the Covariance Matrix
-cov_matrix = np.cov(data_standardized.T)  # Transpose is needed for proper covariance calculation
-
+cov_matrix = np.cov(data_standardized.T) 
+print(cov_matrix)
 # Step 5: Calculate Eigenvalues and Eigenvectors
 eigenvalues, eigenvectors = np.linalg.eig(cov_matrix)
 
@@ -40,7 +40,7 @@ explained_variance = eigenvalues / np.sum(eigenvalues)
 cumulative_variance = np.cumsum(explained_variance)
 
 # Step 8: Project the data onto the top k principal components
-k = 2  # Number of principal components to keep
+k = 2 
 top_k_eigenvectors = eigenvectors[:, :k]
 projected_data = np.dot(data_standardized, top_k_eigenvectors)
 
@@ -48,7 +48,6 @@ projected_data = np.dot(data_standardized, top_k_eigenvectors)
 plt.figure(figsize=(8, 6))
 
 if labels is not None:
-    # Map labels to unique colors
     unique_labels = np.unique(labels)
     colors = plt.cm.rainbow(np.linspace(0, 1, len(unique_labels)))
     for label, color in zip(unique_labels, colors):
@@ -60,11 +59,10 @@ if labels is not None:
             color=color
         )
 else:
-    # Use a continuous color map if no categorical labels are available
     plt.scatter(
         projected_data[:, 0],
         projected_data[:, 1],
-        c=projected_data[:, 0],  # Use first principal component for coloring
+        c=projected_data[:, 0],
         cmap='viridis',
         alpha=0.7
     )
